@@ -1,52 +1,83 @@
-# Zephyr Example Application
+# NCS + Docker Example Application
 
-This repository contains a Zephyr example application. The main purpose of this
-repository is to serve as a reference on how to structure Zephyr based
-applications. Some of the features demonstrated in this example are:
+This repository contains instructions on how to use Docker container as a
+development build environment when creating NSC applications.
 
-- Basic application skeleton
-- [Custom boards][board_porting]
-- Custom [devicetree bindings][bindings]
-- Out-of-tree [drivers][drivers]
-- Example CI configuration (using Github Actions)
+It consists of:
+* a fork of Zephyr's Out-of-tree example.
+* `docker_scripts` folder
 
-This repository is versioned together with the [Zephyr main tree][zephyr]. This
-means that every time that Zephyr is tagged, this repository is tagged as well
-with the same version number, and the [manifest](west.yml) entry for `zephyr`
-will point to the corresponding Zephyr tag. For example, `example-application`
-v2.6.0 will point to Zephyr v2.6.0. Note that the `main` branch will always
-point to the development branch of Zephyr, also `main`.
-
-[board_porting]: https://docs.zephyrproject.org/latest/guides/porting/board_porting.html
-[bindings]: https://docs.zephyrproject.org/latest/guides/dts/bindings.html
-[drivers]: https://docs.zephyrproject.org/latest/reference/drivers/index.html
-[zephyr]: https://github.com/zephyrproject-rtos/zephyr
+This repository is suitable for building v1.8.0 NCS applications.
+The Out-of-tree example was modified to so that it could be built against
+v1.8.0 NCS, namely:
+* Zephyr include paths had to be corrected and
+* `west.yaml` was changed so it pulls in only NCS repo.
 
 ## Getting Started
 
-Before getting started, make sure you have a proper Zephyr development
-environment. You can follow the official
-[Zephyr Getting Started Guide](https://docs.zephyrproject.org/latest/getting_started/index.html).
-
-### Initialization
+### Repo initialization
 
 The first step is to initialize the workspace folder (``my-workspace``) where
 the ``example-application`` and all Zephyr modules will be cloned. You can do
 that by running:
 
-```shell
-# initialize my-workspace for the example-application (main branch)
-west init -m https://github.com/zephyrproject-rtos/example-application --mr main my-workspace
-# update Zephyr modules
+```bash
+west init -m https://github.com/MarkoSagadin/ncs-docker-setup my-workspace
 cd my-workspace
 west update
+cd example-application
 ```
 
-### Build & Run
+#### Install Docker
+
+If you do not have Docker installed on your system run:
+```bash
+cd docker_scripts
+./docker_install
+```
+
+Above needs to be done only once.
+
+#### Build Docker image
+
+Next you will need to build the Docker image, this will take some time:
+
+```bash
+cd docker_scripts
+./docker_build
+```
+
+This needs to be done only once for this project.
+
+### Development cycle
+
+To run the Docker container which contains all required tools:
+
+```bash
+cd docker_scripts
+./docker_run
+```
+
+You will login in home directory, your project is located inside of
+`ncs-project` directory.
+
+
+When you are done with your work you can close the terminal or exit from the
+container with:
+```bash
+exit
+```
+
+All changes that are done inside of `ncs-project` are shared with your NCS
+project on you host machine.
+
+Once inside the container you can use `west` as usual.
+
+#### Build and run
 
 The application can be built by running:
 
-```shell
+```bash
 west build -b $BOARD -s app
 ```
 
@@ -56,13 +87,13 @@ appropriate overlay is provided (see `app/boards`).
 
 A sample debug configuration is also provided. You can apply it by running:
 
-```shell
+```bash
 west build -b $BOARD -s app -- -DOVERLAY_CONFIG=debug.conf
 ```
 
 Note that you may also use it together with `rtt.conf` if using Segger RTT. Once
 you have built the application you can flash it by running:
 
-```shell
+```bash
 west flash
 ```

@@ -6,11 +6,12 @@ manifest:
     path: example-application
 
   remotes:
-    - name: zephyrproject-rtos
-      url-base: https://github.com/zephyrproject-rtos
+    - name: nrfconnect
+      url-base: https://github.com/nrfconnect
 
   projects:
-    - name: zephyr
-      remote: zephyrproject-rtos
-      revision: main
+    - name: nrf
+      repo-path: sdk-nrf
+      remote: nrfconnect
+      revision: v1.8.0
       import: true

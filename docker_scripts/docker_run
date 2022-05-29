@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+docker run -it \
+	--privileged \
+	--volume $(pwd)/../..:/home/skobec/ncs-project \
+	--volume /dev:/dev \
+	ncs-v1.8.0-docky
