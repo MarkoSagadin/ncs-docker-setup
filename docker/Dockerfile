@@ -25,7 +25,6 @@ RUN pip3 install --no-cache-dir west==${WEST_VERSION} && \
     pip3 install --no-cache-dir cmake==${CMAKE_VERSION} && \
     pip3 install --no-cache-dir nrfutil==${NRFUTIL_VERSION}
 
-
 # Download and unpack GNU Arm Embedded Toolchain (version 9-2019-q4-major)
 RUN wget $WGET_ARGS -O archive.tar.bz2 "https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2?revision=108bd959-44bd-4619-9c19-26187abf5225&la=en&hash=E788CE92E5DFD64B2A8C246BBA91A249CB8E2D2D" \
     && echo fe0029de4f4ec43cf7008944e34ff8cc archive.tar.bz2 > /tmp/archive.md5 \
@@ -79,18 +78,12 @@ RUN locale-gen en_US.UTF-8 && \
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
-
-# Set the arguments for host_id and user_id to be able to save the build artifacts
-# outside the container, on host directories, as docker volumes.
 ARG USER \
-    host_uid \
-    host_gid
-RUN groupadd -g $host_gid groupdocky
-RUN useradd -g $host_gid -m -s /bin/bash -u $host_uid $USER
+    host_uid
+RUN useradd -l -m -s /bin/bash -u "$host_uid" $USER
 
 USER $USER
 WORKDIR /home/$USER
-
 
 # Below actions are run with user context and permissions. They add West bash
 # completions, colored output from GCC and saner tab completion behaviour
@@ -101,4 +94,3 @@ RUN cd ~ \
     && echo 'bind "TAB:menu-complete"' >> ~/.bashrc \
     && echo 'bind "set show-all-if-ambiguous on"' >> ~/.bashrc \
     && echo 'bind "set menu-complete-display-prefix on"' >> ~/.bashrc
-

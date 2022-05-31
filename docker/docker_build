@@ -3,5 +3,4 @@
 docker build --tag ncs-v1.8.0-docky \
 	--build-arg "USER=$(whoami)" \
 	--build-arg "host_uid=$(id -u)" \
-	--build-arg "host_gid=$(id -g)" \
 	.

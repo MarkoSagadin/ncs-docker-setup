@@ -2,6 +2,6 @@
 
 docker run -it \
 	--privileged \
-	--volume $(pwd)/../..:/home/skobec/ncs-project \
-	--volume /dev:/dev \
+	--volume $(pwd)/../..:/home/$USER/ncs-project \
+	--volume /dev/bus/usb/:/dev/bus/usb \
 	ncs-v1.8.0-docky
